@@ -33,10 +33,10 @@ $ oc create secret generic kubeconfig --from-file=config=<your kubeconfig file> 
 Create the tasks and pipelines resources:
 
 ~~~
-$ git clone https://
-$ oc create -f task_pvc.yaml
-$ oc create -f task_pod_network.yaml
-$ oc create -f krkn-pipeline.yaml
+$ git clone https://github.com/agabriel81/krkn-pipelines-demo.git
+$ oc create -f krkn-pipelines-demo/task_pvc.yaml
+$ oc create -f krkn-pipelines-demo/task_pod_network.yaml
+$ oc create -f krkn-pipelines/krkn-pipeline.yaml
 ~~~
 
 Run the pipeline:
@@ -64,5 +64,5 @@ You can follow the progress from either the OpenShift Console - Pipelines or via
 $ tkn pipelinerun logs chaos-test-1-run-<random id> -f -n test
 ~~~
 
-This pipeline can be further automated with EventListener and Triggers, and the kubeconfig credentatials can be stored in a more secure way, for example with the integration of [Secret Store CSI driver](https://docs.openshift.com/container-platform/4.17/storage/container_storage_interface/persistent-storage-csi-secrets-store.html) (Technical Preview) and external secret stores such as [AWS KMS, Azure Key Vault or Hashicorp Vault](https://docs.openshift.com/container-platform/4.17/nodes/pods/nodes-pods-secrets-store.html#mounting-secrets-external-secrets-store)
-
+This pipeline can be further automated with [EventListener and Triggers](https://docs.openshift.com/pipelines/1.16/create/creating-applications-with-cicd-pipelines.html#creating-project-and-checking-pipeline-service-account_creating-applications-with-cicd-pipelines)
+Also `kubeconfig` credentatials can be stored in a more secure way, for example with the integration of [Secret Store CSI driver](https://docs.openshift.com/container-platform/4.17/storage/container_storage_interface/persistent-storage-csi-secrets-store.html) (Technical Preview) and external secret stores such as [AWS KMS, Azure Key Vault or Hashicorp Vault](https://docs.openshift.com/container-platform/4.17/nodes/pods/nodes-pods-secrets-store.html#mounting-secrets-external-secrets-store)
