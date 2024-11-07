@@ -16,7 +16,12 @@ This example is based on the OpenShift Pipelines 1.16.
 $ oc new-project test
 $ oc new-app --name nodejs-s2i https://github.com/nodeshift-starters/nodejs-rest-http -i nodejs:18-ubi8-minimal
 $ oc expose svc nodejs-s2i
-$ oc set volume deploy/nodejs-s2i --add -t pvc --name=test --claim-name=test --claim-class=gp3 --claim-size=1G --mount-path=/tes
+~~~
+
+Wait a bit until the OpenShift builds ends and attach a PVC to the deployment:
+
+~~~
+$ oc set volume deploy/nodejs-s2i --add -t pvc --name=test --claim-name=test --claim-class=gp3 --claim-size=1G --mount-path=/test
 ~~~
 
 ## Cluster credentials
@@ -36,7 +41,7 @@ Create the tasks and pipelines resources:
 $ git clone https://github.com/agabriel81/krkn-pipelines-demo.git
 $ oc create -f krkn-pipelines-demo/task_pvc.yaml
 $ oc create -f krkn-pipelines-demo/task_pod_network.yaml
-$ oc create -f krkn-pipelines/krkn-pipeline.yaml
+$ oc create -f krkn-pipelines-demo/krkn-pipeline.yaml
 ~~~
 
 Run the pipeline:
