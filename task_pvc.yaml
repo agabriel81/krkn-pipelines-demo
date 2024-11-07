@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+ name: pvc-outage
+ annotations:
+   tekton.dev/displayName: "PVC Outage"
+spec:
+  params:
+  - name: pod_namespace
+    description: Pod Namespace
+    type: string
+  - name: fill_percentage
+    description: PVC fill percentage
+    type: string
+  - name: pvc_name
+    description: PVC name
+    type: string
+  - name: duration
+    description: Wait Duration
+    type: string
+  - name: block_size
+    description: Block Size
+    type: string
+  volumes:
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+        items:
+        - key: config
+          path: config
+  steps:
+  - name: run-pvc-outage
+    image: quay.io/krkn-chaos/krkn-hub:pvc-scenarios
+    volumeMounts:
+      - name: kubeconfig
+        mountPath: "/home/krkn/.kube"
+        readOnly: true
+    env:
+      - name: NAMESPACE
+        value: $(params.pod_namespace)
+      - name: BLOCK_SIZE
+        value: $(params.block_size)
+      - name: PVC_NAME
+        value: $(params.pvc_name)
+      - name: DURATION
+        value: $(params.duration)
+      - name: FILL_PERCENTAGE
+        value: $(params.fill_percentage)

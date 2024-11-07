@@ -1,0 +1,64 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+ name: pod-network-outage
+ annotations:
+   tekton.dev/displayName: "Pod Network Outage"
+spec:
+  params:
+  - name: pod_namespace
+    description: Pod Namespace
+    type: string
+  - name: pod_label
+    description: Pod Label
+    type: string
+  - name: instance_count
+    description: Instance Count
+    type: string
+  - name: traffic_type
+    description: Traffic Type
+    type: string
+  - name: ingress_port
+    description: Ingress Port
+    type: string
+  - name: egress_port
+    description: Egress Port
+    type: string
+  - name: wait_duration
+    description: Wait Duration
+    type: string
+  - name: test_duration
+    description: Test Duration
+    type: string
+  volumes:
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+        items:
+        - key: config
+          path: config
+  steps:
+  - name: run-pod-network-outage
+    image: quay.io/krkn-chaos/krkn-hub:pod-network-chaos
+    workingDir: "/workspace/source"
+    volumeMounts:
+      - name: kubeconfig
+        mountPath: "/home/krkn/.kube"
+        readOnly: true
+    env:
+      - name: NAMESPACE
+        value: $(params.pod_namespace)
+      - name: LABEL_SELECTOR
+        value: $(params.pod_label)
+      - name: INSTANCE_COUNT
+        value: $(params.instance_count)
+      - name: WAIT_DURATION
+        value: $(params.wait_duration)
+      - name: TEST_DURATION
+        value: $(params.test_duration)
+      - name: INGRESS_PORTS
+        value: $(params.ingress_port)
+      - name: EGRESS_PORTS
+        value: $(params.egress_port)
+      - name: TRAFFIC_TYPE
+        value: $(params.traffic_type)

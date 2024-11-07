@@ -1,0 +1,118 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+ name: chaos-test-1
+spec:
+  params:
+  - name: pod_namespace
+    description: Pod Namespace
+    type: string
+  - name: pod_label
+    description: Pod Label
+    type: string
+  - name: instance_count
+    description: Instance Count
+    type: string
+  - name: traffic_type
+    description: Traffic Type
+    type: string
+  - name: ingress_port
+    description: Ingress Port
+    type: string
+  - name: egress_port
+    description: Egress Port
+    type: string
+  - name: wait_duration
+    description: Wait Duration
+    type: string
+  - name: test_duration
+    description: Test Duration
+    type: string
+  - name: pvc_duration
+    description: PVC Duration
+    type: string
+  - name: fill_percentage
+    description: PVC fill percentage
+    type: string
+  - name: block_size
+    description: Block size used during fill PVC task
+    type: string
+  - name: pvc_name
+    description: PVC name
+    type: string
+  - name: action
+    description: Specify action
+    type: string
+  - name: node_label
+    description: Nodelabel
+    type: string
+  - name: node_count
+    description: Instance count
+    type: string
+  - name: cloud_type
+    description: Cloud type
+    type: string
+  - name: node_duration
+    description: Block Size
+    type: string
+  - name: runs
+    description: Number of runs
+    type: string
+  tasks:
+  - name: pod-network-outage
+    taskRef:
+      name: pod-network-outage
+      kind: Task
+    params:
+    - name: pod_namespace
+      value: $(params.pod_namespace)
+    - name: pod_label
+      value: $(params.pod_label)
+    - name: instance_count
+      value: $(params.instance_count)
+    - name: traffic_type
+      value: $(params.traffic_type)
+    - name: ingress_port
+      value: $(params.ingress_port)
+    - name: egress_port
+      value: $(params.egress_port)
+    - name: wait_duration
+      value: $(params.wait_duration)
+    - name: test_duration
+      value: $(params.test_duration)
+  - name: pvc-outage
+    taskRef:
+      name: pvc-outage
+      kind: Task
+    params:
+    - name: pod_namespace
+      value: $(params.pod_namespace)
+    - name: fill_percentage
+      value: $(params.fill_percentage)
+    - name: pvc_name
+      value: $(params.pvc_name)
+    - name: duration
+      value: $(params.pvc_duration)
+    - name: block_size
+      value: $(params.block_size)
+    runAfter:
+    - pod-network-outage
+  - name: node-outage
+    taskRef:
+      name: node-outage
+      kind: Task
+    params:
+    - name: action
+      value: $(params.action)
+    - name: node_label
+      value: $(params.node_label)
+    - name: instance_count
+      value: $(params.node_count)
+    - name: cloud_type
+      value: $(params.cloud_type)
+    - name: duration
+      value: $(params.node_duration)
+    - name: runs
+      value: $(params.runs)
+    runAfter:
+    - pvc-outage
